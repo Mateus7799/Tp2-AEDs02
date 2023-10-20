@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_PLAYERS 3921
+#define MAX_PLAYERS 3922
 #define MAX_ID_LENGTH 20
 #define MAX_LINE_LENGTH 200
 #define MAX_FILENAME_LENGTH 50
