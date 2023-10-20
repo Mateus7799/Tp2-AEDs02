@@ -1,35 +1,29 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 class Player {
-    String id;
+    int id;
     String name;
-    String height;
-    String weight;
-    String college;
+    int height;
+    int weight;
     String born;
+    String collage;
     String birthCity;
     String birthState;
 
-    public Player(String id, String name, String height, String weight, String college, String born, String birthCity, String birthState) {
+    public Player(int id, String name, int height, int weight, String born, String collage, String birthCity, String birthState) {
         this.id = id;
         this.name = name;
         this.height = height;
         this.weight = weight;
-        this.college = college;
         this.born = born;
+        this.collage = collage;
         this.birthCity = birthCity;
         this.birthState = birthState;
     }
 
-    @Override
     public String toString() {
-        return String.format("[Id %s Player %s height %s weight %s born %s collage %s birth city %s birth state %s]",
-                id, name, height, weight, born, college, birthCity, birthState);
+        return "[" + id + " ## " + name + " ## " + height + " ## " + weight + " ## " + born + " ## " + collage + " ## " + birthCity + " ## " + birthState + "]";
     }
 }
 
@@ -37,69 +31,93 @@ public class PlayerHeapsort {
     private static int comparisons = 0;
     private static int movements = 0;
 
-    private static void heapify(ArrayList<Player> arr, int n, int i) {
+    private static void heapify(Player[] arr, int n, int i) {
         int largest = i;
         int l = 2 * i + 1;
         int r = 2 * i + 2;
 
-        if (l < n && Integer.parseInt(arr.get(l).height) > Integer.parseInt(arr.get(largest).height)) {
+        if (l < n && arr[l].height > arr[largest].height) {
             largest = l;
         }
-        if (r < n && Integer.parseInt(arr.get(r).height) > Integer.parseInt(arr.get(largest).height)) {
+
+        if (r < n && arr[r].height > arr[largest].height) {
             largest = r;
         }
-        comparisons += 2;
 
         if (largest != i) {
-            Player temp = arr.get(i);
-            arr.set(i, arr.get(largest));
-            arr.set(largest, temp);
+            Player temp = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = temp;
             movements += 3;
+
             heapify(arr, n, largest);
         }
     }
 
-    private static void heapSort(ArrayList<Player> arr) {
-        int n = arr.size();
+    private static void heapSort(Player[] arr) {
+        int n = arr.length;
 
         for (int i = n / 2 - 1; i >= 0; i--) {
             heapify(arr, n, i);
         }
 
         for (int i = n - 1; i > 0; i--) {
-            Player temp = arr.get(0);
-            arr.set(0, arr.get(i));
-            arr.set(i, temp);
+            Player temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
             movements += 3;
 
             heapify(arr, i, 0);
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("/tmp/players.csv"));
-        PrintWriter writer = new PrintWriter(new FileWriter("808360_heapsort.txt"));
+    public static void main(String[] args) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/tmp/players.csv"));
+            List<Player> players = new ArrayList<>();
 
-        ArrayList<Player> players = new ArrayList<>();
-        String line = reader.readLine(); // ignore first line
-
-        while ((line = reader.readLine()) != null && !line.equals("FIM")) {
-            String[] data = line.split(",");
-            if (data.length >= 8) { 
-               players.add(new Player(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
-            } else {
-              System.out.println("Os dados não estão no formato esperado: " + line);
+            String line = reader.readLine(); // read header line and discard
+            while ((line = reader.readLine()) != null) {
+                String[] attributes = line.split(",");
+                Player player = new Player(Integer.parseInt(attributes[0].trim()), attributes[1].trim(), Integer.parseInt(attributes[2].trim()), Integer.parseInt(attributes[3].trim()), attributes[6].trim(), attributes[4].trim(), attributes[5].trim(), attributes[7].trim());
+                players.add(player);
             }
-       }
-        reader.close();
+            reader.close();
 
-        heapSort(players);
+            Scanner scanner = new Scanner(System.in);
+            List<Player> selectedPlayers = new ArrayList<>();
+            System.out.println("Enter player IDs (type 'FIM' to finish):");
+            while (true) {
+                String input = scanner.nextLine();
+                if (input.equals("FIM")) {
+                    break;
+                }
+                int id = Integer.parseInt(input.trim());
+                for (Player player : players) {
+                    if (player.id == id) {
+                        selectedPlayers.add(player);
+                        break;
+                    }
+                }
+            }
+            scanner.close();
 
-        for (Player player : players) {
-            System.out.println(player.toString());
+            Player[] arr = selectedPlayers.toArray(new Player[0]);
+            long startTime = System.nanoTime();
+            heapSort(arr);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime);
+
+            PrintWriter writer = new PrintWriter("808360_heapsort.txt", "UTF-8");
+            writer.println("808360\t" + comparisons + "\t" + movements + "\t" + duration);
+            writer.close();
+
+            for (Player player : arr) {
+                System.out.println(player.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        writer.print("808360\t" + comparisons + "\t" + movements + "\t" + System.currentTimeMillis());
-        writer.close();
     }
 }
