@@ -69,7 +69,7 @@ int main() {
         }
         sscanf(line, "%[^,]", id);
         if (strcmp(id, "Id") != 0) {
-            strcpy(players[count].id, id);
+            strncpy(players[count].id, id, sizeof(players[count].id));
             sscanf(line, "%*[^,],%[^,],%d,%d,%[^,],%[^,],%[^,],%[^\n]", players[count].player, &players[count].height, &players[count].weight, players[count].born, players[count].college, players[count].birth_city, players[count].birth_state);
             count++;
         }
