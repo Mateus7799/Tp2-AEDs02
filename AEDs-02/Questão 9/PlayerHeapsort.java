@@ -27,7 +27,7 @@ class Player {
     }
 }
 
-public class PlayerHeaport {
+public class PlayerHeasport {
 
     public static void heapSort(Player[] arr) {
         int n = arr.length;
