@@ -12,12 +12,13 @@ typedef struct {
     char player[100];
     int height;
     int weight;
+    char collage[100];
     char born[50];
-    char college[100];
     char birth_city[100];
     char birth_state[50];
 } Player;
 
+// Shell sort algorithm
 void shellSort(Player arr[], int n, unsigned long int *comparisons, unsigned long int *swaps) {
     for (int gap = n / 2; gap > 0; gap /= 2) {
         for (int i = gap; i < n; i++) {
@@ -39,17 +40,20 @@ int main() {
     char filename[] = "/tmp/players.csv";
     char logFilename[] = "808360_shellsort.txt";
 
+    // Abrindo o arquivo de log
     outputFile = fopen(logFilename, "w");
     if (outputFile == NULL) {
         printf("Erro ao criar o arquivo de log.");
         return 1;
     }
 
+    // Registros para o log
     unsigned long int comparisons = 0;
     unsigned long int swaps = 0;
     clock_t begin, end;
     double time_spent;
 
+    // Abrindo o arquivo CSV
     inputFile = fopen(filename, "r");
     if (inputFile == NULL) {
         fprintf(outputFile, "Erro ao abrir o arquivo %s\n", filename);
@@ -57,6 +61,7 @@ int main() {
         return 1;
     }
 
+    // Lendo os ids e armazenando os jogadores correspondentes
     char id[MAX_ID_LENGTH];
     int count = 0;
     int input_finished = 0;
@@ -67,25 +72,49 @@ int main() {
             input_finished = 1;
             break;
         }
-        sscanf(line, "%[^,]", id);
-        if (strcmp(id, "Id") != 0) {
-            strncpy(players[count].id, id, sizeof(players[count].id));
-            sscanf(line, "%*[^,],%[^,],%d,%d,%[^,],%[^,],%[^,],%[^\n]", players[count].player, &players[count].height, &players[count].weight, players[count].born, players[count].college, players[count].birth_city, players[count].birth_state);
+        if (strstr(line, "Id") == NULL) {
+            char *token = strtok(line, ",");
+            strcpy(players[count].id, token);
+
+            token = strtok(NULL, ",");
+            strcpy(players[count].player, token);
+
+            token = strtok(NULL, ",");
+            players[count].height = atoi(token);
+
+            token = strtok(NULL, ",");
+            players[count].weight = atoi(token);
+
+            token = strtok(NULL, ",");
+            strcpy(players[count].collage, token);
+
+            token = strtok(NULL, ",");
+            strcpy(players[count].born, token);
+
+            token = strtok(NULL, ",");
+            strcpy(players[count].birth_city, token);
+
+            token = strtok(NULL, ",");
+            strcpy(players[count].birth_state, token);
+
             count++;
         }
     }
     fclose(inputFile);
 
+    // Executando o algoritmo de ordenação
     begin = clock();
     shellSort(players, count, &comparisons, &swaps);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
+    // Escrevendo no arquivo de log
     fprintf(outputFile, "808360\t%lu\t%lu\t%f\n", comparisons, swaps, time_spent);
     fclose(outputFile);
 
+    // Escrevendo a saída ordenada
     for (int i = 0; i < count; i++) {
-        printf("[Id ## %s ## Player ## %s ## height ## %d ## weight ## %d ## born ## %s ## collage ## %s ## birth city ## %s ## birth state ## %s]\n", players[i].id, players[i].player, players[i].height, players[i].weight, players[i].born, players[i].college, players[i].birth_city, players[i].birth_state);
+        printf("[Id ## %s ## Player ## %s ## height ## %d ## weight ## %d ## born ## %s ## collage ## %s ## birth city ## %s ## birth state ## %s]\n", players[i].id, players[i].player, players[i].height, players[i].weight, players[i].born, players[i].collage, players[i].birth_city, players[i].birth_state);
     }
 
     return 0;
