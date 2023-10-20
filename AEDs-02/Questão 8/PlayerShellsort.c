@@ -61,9 +61,6 @@ int main() {
     Player players[MAX_PLAYERS];
     char line[MAX_LINE_LENGTH];
 
-    // Ignorando a primeira linha
-    fgets(line, sizeof(line), file);
-
     int count = 0;
     while (fgets(line, sizeof(line), file)) {
         if (count >= MAX_PLAYERS) {
@@ -106,7 +103,7 @@ int main() {
     writeLog(comparisons, movements, time_taken);
 
     for (int i = 0; i < inputCount; i++) {
-        printf("[Id %d Player %s height %d weight %d born %s collage %s birth city %s birth state %s]\n",
+        printf("[Id ## %d Player ## %s height ## %d weight ## %d born ## %s collage ## %s birth city ## %s birth state ## %s]\n",
                selectedPlayers[i].id, selectedPlayers[i].playerName, selectedPlayers[i].height,
                selectedPlayers[i].weight, selectedPlayers[i].born, selectedPlayers[i].college,
                selectedPlayers[i].birthCity, selectedPlayers[i].birthState);
