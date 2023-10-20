@@ -33,7 +33,7 @@ class Player {
     }
 }
 
-public class PlayerHeapSort {
+public class PlayerHeapsort {
     private static int comparisons = 0;
     private static int movements = 0;
 
