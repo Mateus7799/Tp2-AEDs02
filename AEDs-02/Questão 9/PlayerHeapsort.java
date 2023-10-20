@@ -85,8 +85,12 @@ public class PlayerHeapsort {
 
         while ((line = reader.readLine()) != null && !line.equals("FIM")) {
             String[] data = line.split(",");
-            players.add(new Player(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
-        }
+            if (data.length >= 8) { 
+               players.add(new Player(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
+            } else {
+              System.out.println("Os dados não estão no formato esperado: " + line);
+            }
+       }
         reader.close();
 
         heapSort(players);
