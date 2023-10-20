@@ -85,7 +85,7 @@ int main() {
     fclose(outputFile);
 
     for (int i = 0; i < count; i++) {
-        printf("[Id %s Player %s height %d weight %d born %s collage %s birth city %s birth state %s]\n", players[i].id, players[i].player, players[i].height, players[i].weight, players[i].born, players[i].college, players[i].birth_city, players[i].birth_state);
+        printf("[Id ## %s ## Player ## %s ## height ## %d ## weight ## %d ## born ## %s ## collage ## %s ## birth city ## %s ## birth state ## %s]\n", players[i].id, players[i].player, players[i].height, players[i].weight, players[i].born, players[i].college, players[i].birth_city, players[i].birth_state);
     }
 
     return 0;
