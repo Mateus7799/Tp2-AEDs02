@@ -3,60 +3,109 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_PLAYERS 3923
-#define FILENAME "../tmp/players.csv"
-#define LOG_FILENAME "808360_bolha.txt"
+#define MAX_PLAYERS 3922
+#define MAX_ID_LENGTH 20
+#define MAX_LINE_LENGTH 200
+#define MAX_FILENAME_LENGTH 50
+#define LOG_FILENAME "808360_bubblesort.txt"
 
-void BubbleSort(Log* log, Lista lista) {
-    int N = lista.size;
-    Jogador* array = lista.array;
-    int comparisons = 0, swaps = 0;
+typedef struct {
+    int id;
+    char playerName[100];
+    int height;
+    int weight;
+    char born[50];
+    char college[100];
+    char birthCity[50];
+    char birthState[50];
+} Player;
 
-    for (int i = 0; i < N - 1; i++) {
-        for (int j = 0; j < N - 1; j++) {
+int comparisons = 0;
+int movements = 0;
+
+void writeLog(int comparisons, int movements, double time_taken) {
+    FILE *logFile = fopen(LOG_FILENAME, "w");
+    if (logFile == NULL) {
+        printf("Erro ao criar o arquivo de log.");
+        return;
+    }
+    fprintf(logFile, "808360\t%d\t%d\t%f", comparisons, movements, time_taken);
+    fclose(logFile);
+}
+
+void bubbleSort(Player arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (strcmp(arr[j].born, arr[j + 1].born) > 0) {
+                Player temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                movements += 3;
+            }
             comparisons++;
-            if (lista.CompareToInt(array[j], array[j + 1], log)) {
-                swap(&array[j], &array[j + 1], log);
-                swaps++;
+        }
+    }
+}
+
+int main() {
+    FILE *file;
+    char filename[MAX_FILENAME_LENGTH] = "/tmp/players.csv";
+    file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo.");
+        return 1;
+    }
+
+    Player players[MAX_PLAYERS];
+    char line[MAX_LINE_LENGTH];
+
+    int count = 0;
+    while (fgets(line, sizeof(line), file)) {
+        if (count >= MAX_PLAYERS) {
+            break;
+        }
+        sscanf(line, "%d,%[^,],%d,%d,%[^,],%[^,],%[^,],%s",
+               &players[count].id, players[count].playerName, &players[count].height,
+               &players[count].weight, players[count].college, players[count].born,
+               players[count].birthCity, players[count].birthState);
+        count++;
+    }
+    fclose(file);
+
+    int inputId;
+    int inputIds[464];
+    int inputCount = 0;
+    while (scanf("%d", &inputId)) {
+        if (inputId == -1) {
+            break;
+        }
+        inputIds[inputCount] = inputId;
+        inputCount++;
+    }
+
+    Player selectedPlayers[inputCount];
+    for (int i = 0; i < inputCount; i++) {
+        for (int j = 0; j < count; j++) {
+            if (players[j].id == inputIds[i]) {
+                selectedPlayers[i] = players[j];
             }
         }
     }
 
-    log->comparisons = comparisons;
-    log->swaps = swaps;
-}
+    clock_t t;
+    t = clock();
+    bubbleSort(selectedPlayers, inputCount);
+    t = clock() - t;
+    double time_taken = ((double)t) / CLOCKS_PER_SEC;
 
-int main() {
-    Timer timer = newTimer();
-    Log log;
-    log.comparisons = 0;
-    log.swaps = 0;
-    Lista BD = newLista(MAX_PLAYERS);
-    BD.ImportDataBase(FILENAME, &BD);
+    writeLog(comparisons, movements, time_taken);
 
-    Lista lista = newLista(465); 
-    char inputPUBIN[STR_MAX_LEN];
-
-    while (strcmp(readStr(0, inputPUBIN), "FIM")) {
-        int id = atoi(inputPUBIN);
-        lista.Inserir(BD.Get(id, BD), &lista);
-        lista.setAtributo(&BD.array[id].anoNascimento, lista);
+    for (int i = 0; i < inputCount; i++) {
+        printf("[Id ## %d Player ## %s height ## %d weight ## %d born ## %s collage ## %s birth city ## %s birth state ## %s]\n",
+               selectedPlayers[i].id, selectedPlayers[i].playerName, selectedPlayers[i].height,
+               selectedPlayers[i].weight, selectedPlayers[i].born, selectedPlayers[i].college,
+               selectedPlayers[i].birthCity, selectedPlayers[i].birthState);
     }
 
-    timer.Start(&timer);
-    BubbleSort(&log, lista);
-    timer.Stop(&timer);
-
-    lista.Mostrar(lista);
-
-    FILE *logFile = fopen(LOG_FILENAME, "w");
-    if (!logFile) {
-        printf("Erro ao criar o arquivo de log.\n");
-        return 1;
-    }
-    fprintf(logFile, "%d\t%d\t%d\t%f", 808360, log.comparisons, log.swaps, timer.totalTime);
-    fclose(logFile);
-
-    lista.Close(&lista);
-    BD.Close(&BD);
+    return 0;
 }
