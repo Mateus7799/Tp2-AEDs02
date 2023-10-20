@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_PLAYERS 3922
+#define MAX_PLAYERS 3921
 #define MAX_ID_LENGTH 20
 #define MAX_LINE_LENGTH 200
 #define MAX_FILENAME_LENGTH 50
@@ -60,6 +60,9 @@ int main() {
 
     Player players[MAX_PLAYERS];
     char line[MAX_LINE_LENGTH];
+
+    // Ignorando a primeira linha
+    fgets(line, sizeof(line), file);
 
     int count = 0;
     while (fgets(line, sizeof(line), file)) {
