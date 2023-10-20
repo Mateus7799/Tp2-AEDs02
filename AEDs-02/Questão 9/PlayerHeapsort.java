@@ -6,18 +6,18 @@ class Player {
     String name;
     int height;
     int weight;
-    String born;
     String collage;
+    String born;
     String birthCity;
     String birthState;
 
-    public Player(int id, String name, int height, int weight, String born, String collage, String birthCity, String birthState) {
+    public Player(int id, String name, int height, int weight, String collage, String born, String birthCity, String birthState) {
         this.id = id;
         this.name = name;
         this.height = height;
         this.weight = weight;
-        this.born = born;
         this.collage = collage;
+        this.born = born;
         this.birthCity = birthCity;
         this.birthState = birthState;
     }
@@ -79,7 +79,7 @@ public class PlayerHeapsort {
             String line = reader.readLine(); // read header line and discard
             while ((line = reader.readLine()) != null) {
                 String[] attributes = line.split(",");
-                Player player = new Player(Integer.parseInt(attributes[0].trim()), attributes[1].trim(), Integer.parseInt(attributes[2].trim()), Integer.parseInt(attributes[3].trim()), attributes[6].trim(), attributes[4].trim(), attributes[5].trim(), attributes[7].trim());
+                Player player = new Player(Integer.parseInt(attributes[0].trim()), attributes[1].trim(), Integer.parseInt(attributes[2].trim()), Integer.parseInt(attributes[3].trim()), attributes[4].trim(), attributes[5].trim(), attributes[6].trim(), attributes[7].trim());
                 players.add(player);
             }
             reader.close();
