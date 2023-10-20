@@ -38,12 +38,11 @@ void bubbleSort(struct Player players[], int n, unsigned long int *comparisons, 
 int main() {
     FILE *inputFile, *logFile;
     char id[MAX_ID_LENGTH];
-    char filename[] = "/tmp/players.csv";
+    char filename[] = "/tmp/players.csv"; 
     char logFilename[] = "808360_bolha.txt";
     char line[MAX_LINE_LENGTH];
     struct Player players[MAX_PLAYERS];
     int count = 0;
-
     FILE *source, *target;
     char ch;
     source = fopen("players.csv", "r");
@@ -62,13 +61,13 @@ int main() {
     }
     fclose(source);
     fclose(target);
-
     inputFile = fopen(filename, "r");
     if (!inputFile) {
-        printf("Erro ao abrir o arquivo players.csv.\n");
+        printf("Erro ao abrir o arquivo em /tmp/players.csv.\n");
         return 1;
     }
-    fgets(line, sizeof(line), inputFile); 
+
+    fgets(line, sizeof(line), inputFile);
 
     while (fgets(line, sizeof(line), inputFile)) {
         sscanf(line, "%[^,],%[^,],%d,%d,%[^,],%[^,],%[^,],%[^\n]", id, players[count].name, &players[count].height, &players[count].weight, players[count].collage, players[count].born, players[count].birth_city, players[count].birth_state);
