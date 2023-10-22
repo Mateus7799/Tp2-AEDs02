@@ -7,8 +7,8 @@
 #define MAX_ID_LENGTH 20
 #define MAX_LINE_LENGTH 200
 #define MAX_FILENAME_LENGTH 50
+#define K_VALUE 10
 #define LOG_FILENAME "808360_partialinsertionsort.txt"
-#define K 10
 
 typedef struct {
     int id;
@@ -34,28 +34,18 @@ void writeLog(int comparisons, int movements, double time_taken) {
     fclose(logFile);
 }
 
-void insertionSort(Player arr[], int n) {
-    for (int i = 1; i < n; i++) {
+void InsertionSortParcial(Player arr[], int n) {
+    for (int i = K_VALUE; i < n; i++) {
         Player key = arr[i];
         int j = i - 1;
-        while (j >= 0 && strcmp(arr[j].born, key.born) > 0) {
+        while (j >= K_VALUE - 1 && strcmp(arr[j].born, key.born) > 0) {
             arr[j + 1] = arr[j];
-            j = j - 1;
+            j--;
             comparisons++;
             movements++;
         }
         arr[j + 1] = key;
         movements++;
-    }
-}
-
-void partialInsertionSort(Player arr[], int n) {
-    for (int i = 0; i < n; i += K) {
-        if (i + K <= n) {
-            insertionSort(arr + i, K);
-        } else {
-            insertionSort(arr + i, n - i);
-        }
     }
 }
 
@@ -84,39 +74,19 @@ int main() {
     }
     fclose(file);
 
-    int inputId;
-    int inputIds[464];
-    int inputCount = 0;
-    while (scanf("%d", &inputId)) {
-        if (inputId == -1) {
-            break;
-        }
-        inputIds[inputCount] = inputId;
-        inputCount++;
-    }
-
-    Player selectedPlayers[inputCount];
-    for (int i = 0; i < inputCount; i++) {
-        for (int j = 0; j < count; j++) {
-            if (players[j].id == inputIds[i]) {
-                selectedPlayers[i] = players[j];
-            }
-        }
-    }
-
     clock_t t;
     t = clock();
-    partialInsertionSort(selectedPlayers, inputCount);
+    InsertionSortParcial(players, count);
     t = clock() - t;
     double time_taken = ((double)t) / CLOCKS_PER_SEC;
 
     writeLog(comparisons, movements, time_taken);
 
-    for (int i = 0; i < inputCount; i++) {
+    for (int i = 0; i < K_VALUE; i++) {
         printf("[Id ## %d Player ## %s height ## %d weight ## %d born ## %s collage ## %s birth city ## %s birth state ## %s]\n",
-               selectedPlayers[i].id, selectedPlayers[i].playerName, selectedPlayers[i].height,
-               selectedPlayers[i].weight, selectedPlayers[i].born, selectedPlayers[i].college,
-               selectedPlayers[i].birthCity, selectedPlayers[i].birthState);
+               players[i].id, players[i].playerName, players[i].height,
+               players[i].weight, players[i].born, players[i].college,
+               players[i].birthCity, players[i].birthState);
     }
 
     return 0;
