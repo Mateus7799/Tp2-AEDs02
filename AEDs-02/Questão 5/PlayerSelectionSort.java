@@ -32,17 +32,35 @@ class Player {
     }
 }
 
-public class PlayerMergeSort {
+public class PlayerSelectionSort {
     static int comparisons = 0;
     static int movements = 0;
 
-    public static void mergeSort(Player[] arr, int l, int r) {
-    }
-
-    public static void merge(Player[] arr, int l, int m, int r) {
+    public static void selectionSort(Player[] arr, int n) {
+        for (int i = 0; i < n - 1; i++) {
+            int min_idx = i;
+            for (int j = i + 1; j < n; j++) {
+                if (arr[j].playerName.compareTo(arr[min_idx].playerName) < 0) {
+                    min_idx = j;
+                }
+                comparisons++;
+            }
+            Player temp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = temp;
+            movements += 3;
+        }
     }
 
     public static void writeLog(int comparisons, int movements, double timeTaken) {
+        try {
+            FileWriter logFile = new FileWriter("808360_selectionsort.txt");
+            logFile.write("808360\t" + comparisons + "\t" + movements + "\t" + timeTaken);
+            logFile.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing the log file.");
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -54,7 +72,7 @@ public class PlayerMergeSort {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-
+           
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
@@ -69,16 +87,12 @@ public class PlayerMergeSort {
             e.printStackTrace();
         }
 
-      public static void writeLog(int comparisons, int movements, double timeTaken) {
-          try {
-              FileWriter logFile = new FileWriter("808360_mergesort.txt");
-              logFile.write("808360\t" + comparisons + "\t" + movements + "\t" + timeTaken);
-              logFile.close();
-          } catch (IOException e) {
-              System.out.println("An error occurred while writing the log file.");
-              e.printStackTrace();
-          }
-      }
+        long startTime = System.nanoTime();
+        selectionSort(players, count);
+        long endTime = System.nanoTime();
+        double timeTaken = (endTime - startTime) / 1e6; 
+
+        writeLog(comparisons, movements, timeTaken);
 
         for (int i = 0; i < count; i++) {
             System.out.println(players[i]);
