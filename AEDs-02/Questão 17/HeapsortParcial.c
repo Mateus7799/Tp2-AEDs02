@@ -34,56 +34,46 @@ void writeLog(int comparisons, int movements, double time_taken) {
     fclose(logFile);
 }
 
-void maxHeapify(Player arr[], int n, int i) {
-    int largest = i;
+void swap(Player *a, Player *b) {
+    Player t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void heapify(Player arr[], int n, int i) {
+    int smallest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
 
-    if (l < n && arr[l].height > arr[largest].height) {
-        largest = l;
+    if (l < n && arr[l].height > arr[smallest].height) {
+        smallest = l;
     }
 
-    if (r < n && arr[r].height > arr[largest].height) {
-        largest = r;
+    if (r < n && arr[r].height > arr[smallest].height) {
+        smallest = r;
     }
 
-    if (largest != i) {
-        Player temp = arr[i];
-        arr[i] = arr[largest];
-        arr[largest] = temp;
-        movements += 3;
-        maxHeapify(arr, n, largest);
+    if (smallest != i) {
+        swap(&arr[i], &arr[smallest]);
+        heapify(arr, n, smallest);
     }
 }
 
 void heapSort(Player arr[], int n) {
-    for (int i = n / 2 - 1; i >= 0; i--) {
-        maxHeapify(arr, n, i);
+    for (int i = K / 2 - 1; i >= 0; i--) {
+        heapify(arr, K, i);
     }
 
-    for (int i = n - 1; i > 0; i--) {
-        Player temp = arr[0];
-        arr[0] = arr[i];
-        arr[i] = temp;
-        movements += 3;
-        maxHeapify(arr, i, 0);
-    }
-}
-
-void partialHeapSort(Player arr[], int n, int k) {
-    if (k > n) {
-        k = n;
-    }
-    heapSort(arr, k);
-
-    for (int i = k; i < n; i++) {
+    for (int i = K; i < n; i++) {
         if (arr[i].height < arr[0].height) {
-            Player temp = arr[0];
-            arr[0] = arr[i];
-            arr[i] = temp;
-            movements += 3;
-            maxHeapify(arr, k, 0);
+            swap(&arr[i], &arr[0]);
+            heapify(arr, K, 0);
         }
+    }
+
+    for (int i = K - 1; i > 0; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
     }
 }
 
@@ -112,39 +102,24 @@ int main() {
     }
     fclose(file);
 
-    int inputId;
-    int inputIds[464];
-    int inputCount = 0;
-    while (scanf("%d", &inputId)) {
-        if (inputId == -1) {
-            break;
-        }
-        inputIds[inputCount] = inputId;
-        inputCount++;
-    }
-
-    Player selectedPlayers[inputCount];
-    for (int i = 0; i < inputCount; i++) {
-        for (int j = 0; j < count; j++) {
-            if (players[j].id == inputIds[i]) {
-                selectedPlayers[i] = players[j];
-            }
-        }
+    Player smallestPlayers[K];
+    for (int i = 0; i < K; i++) {
+        smallestPlayers[i] = players[i];
     }
 
     clock_t t;
     t = clock();
-    partialHeapSort(selectedPlayers, inputCount, K);
+    heapSort(smallestPlayers, K);
     t = clock() - t;
     double time_taken = ((double)t) / CLOCKS_PER_SEC;
 
     writeLog(comparisons, movements, time_taken);
 
-    for (int i = 0; i < inputCount; i++) {
+    for (int i = 0; i < K; i++) {
         printf("[Id ## %d Player ## %s height ## %d weight ## %d born ## %s collage ## %s birth city ## %s birth state ## %s]\n",
-               selectedPlayers[i].id, selectedPlayers[i].playerName, selectedPlayers[i].height,
-               selectedPlayers[i].weight, selectedPlayers[i].born, selectedPlayers[i].college,
-               selectedPlayers[i].birthCity, selectedPlayers[i].birthState);
+               smallestPlayers[i].id, smallestPlayers[i].playerName, smallestPlayers[i].height,
+               smallestPlayers[i].weight, smallestPlayers[i].born, smallestPlayers[i].college,
+               smallestPlayers[i].birthCity, smallestPlayers[i].birthState);
     }
 
     return 0;
